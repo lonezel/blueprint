@@ -3,7 +3,22 @@ blueprint:
   description: >
     This blueprint controls lights or scenes based on motion detected by the VALLHORN Wireless Motion Sensor.
 
-	@@ -23,16 +23,21 @@ blueprint:
+    Key features:
+    - Turn on lights/scenes when motion is detected.
+    - Optional time slots and luminance level settings.
+    - Sun horizon and elevation adjustments for more granular control.
+    - Wait time for turning off lights after no motion is detected.
+    - Optional scene activation when no motion is detected.
+    - Automation and motion-off blockers for more customization.
+  domain: automation
+  source_url: https://github.com/brigger/HomeAssistant_Blueprints/blob/main/advanced_custom_motion_sensor.yaml
+  input:
+    motion_entity:
+      name: Motion Sensor
+      description: Motion sensor or Binary sensor group with Occupancy/Opening sensors.
+      selector:
+        entity:
+          domain: binary_sensor
           multiple: false
     light_target:
       name: Light Target
@@ -25,7 +40,25 @@ blueprint:
       selector:
         entity:
           domain: sensor
-	@@ -58,28 +63,42 @@ blueprint:
+          device_class: illuminance
+          multiple: false
+    luminance_required:
+      name: Luminance Threshold
+      description: Automation triggers if luminance is below this level.
+      default: 100
+      selector:
+        number:
+          min: 0
+          max: 1000
+          unit_of_measurement: lx
+    no_motion_wait:
+      name: Wait Time
+      description: Time to wait before turning off lights after no motion is detected.
+      default: 120
+      selector:
+        number:
+          min: 0
+          max: 600
           unit_of_measurement: seconds
           mode: slider
           step: 1
@@ -68,7 +101,8 @@ blueprint:
       default: 0
       selector:
         number:
-	@@ -88,48 +107,106 @@ blueprint:
+          min: -90
+          max: 90
           unit_of_measurement: degrees
           mode: slider
           step: 1
@@ -175,7 +209,23 @@ variables:
 trigger:
   - platform: state
     entity_id: !input motion_entity
-	@@ -142,57 +219,99 @@ trigger:
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -142,57 +219,99 @@ trigger:
+  
+    from: "off"
+    to: "on"
+  - platform: state
+    entity_id: !input motion_entity
+    from: "on"
+    to: "off"
     for: !input no_motion_wait
 
 condition:
