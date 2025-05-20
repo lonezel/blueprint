@@ -10,6 +10,7 @@ blueprint:
     - Wait time for turning off lights after no motion is detected.
     - Optional scene activation when no motion is detected.
     - Automation and motion-off blockers for more customization.
+
   domain: automation
   source_url: https://github.com/brigger/HomeAssistant_Blueprints/blob/main/advanced_custom_motion_sensor.yaml
   input:
@@ -209,17 +210,6 @@ variables:
 trigger:
   - platform: state
     entity_id: !input motion_entity
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -142,57 +219,99 @@ trigger:
-  
     from: "off"
     to: "on"
   - platform: state
@@ -237,7 +227,7 @@ condition:
       {% else %}
         {{ states(automation_blocker) == automation_blocker_state }}
       {% endif %}
-
+  
   # Sun position check
   - condition: template
     value_template: >
@@ -255,7 +245,7 @@ condition:
 action:
   - variables:
       triggered_state: "{{ trigger.to_state.state }}"
-
+  
   # Handle "ON" trigger (motion detected)
   - if:
       - condition: template
@@ -271,7 +261,7 @@ action:
                 {% set current_luminance = states(luminance_sensor) | float(1000) %}
                 {{ current_luminance < luminance_required }}
               {% endif %}
-
+          
           # Check time restriction if enabled
           - condition: template
             value_template: >
@@ -288,7 +278,7 @@ action:
         then:
           - service: homeassistant.turn_on
             target: !input light_target
-
+  
   # Handle "OFF" trigger (no motion)
   - if:
       - condition: template
